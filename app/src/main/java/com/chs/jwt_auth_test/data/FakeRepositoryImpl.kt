@@ -1,6 +1,7 @@
 package com.chs.jwt_auth_test.data
 
 import android.util.Log
+import androidx.datastore.dataStore
 import com.chs.jwt_auth_test.common.ApiResult
 import com.chs.jwt_auth_test.common.Constants
 import com.chs.jwt_auth_test.domain.FakeRepository
@@ -24,9 +25,9 @@ class FakeRepositoryImpl @Inject constructor(
                  )
             ).body()!!
 
-            pref.putData(Constants.PREF_KEY_ACCESS_TOKEN, response.accessToken)
+            pref.putData(Constants.PREF_KEY_ACCESS_TOKEN, "${Constants.TOKEN_TYPE} ${response.accessToken}")
             pref.putData(Constants.PREF_KEY_REFRESH_TOKEN, response.refreshToken)
-
+            Log.e("API_REQUEST_LOGIN", response.toString())
             ApiResult.Authorized()
         } catch (e: HttpException) {
             if (e.code() == 401) {
@@ -34,25 +35,31 @@ class FakeRepositoryImpl @Inject constructor(
                 ApiResult.UnAuthorized()
             } else {
                 Log.e("API_REQUEST_LOGIN", e.message())
-                ApiResult.UnknownError()
+                ApiResult.UnknownError(e.message.toString())
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST_LOGIN", e.message.toString())
-            ApiResult.UnknownError()
+            ApiResult.UnknownError(e.message.toString())
         }
     }
 
-    override suspend fun requestUserInfo(isExpiredToken: Boolean): ApiResult<UserInfo> {
+
+    override suspend fun changeTokenInfo() {
+        pref.putData(
+            keyName = Constants.PREF_KEY_ACCESS_TOKEN,
+            value = pref.getData(Constants.PREF_KEY_ACCESS_TOKEN, "").plus("ABCDEFG")
+        )
+    }
+
+    override suspend fun requestUserInfo(): ApiResult<UserInfo> {
         return try {
-            val accessToken = pref.getData(Constants.PREF_KEY_ACCESS_TOKEN, "").run {
-                if (isExpiredToken) this.plus("A")
-                else this
-            }
+            val accessToken = pref.getData(Constants.PREF_KEY_ACCESS_TOKEN, "")
 
             val response: ResponseUserInfo = api.requestUserProfile(
-                token = "${Constants.TOKEN_TYPE} $accessToken"
+                token = accessToken
             ).body()!!
 
+            Log.e("API_REQUEST_USER_INFO", response.toString())
             ApiResult.Authorized(response.toUserInfo())
         } catch (e: HttpException) {
             if (e.code() == 401) {
@@ -60,11 +67,11 @@ class FakeRepositoryImpl @Inject constructor(
                 ApiResult.UnAuthorized()
             } else {
                 Log.e("API_REQUEST_USER_INFO", e.message())
-                ApiResult.UnknownError()
+                ApiResult.UnknownError(e.message.toString())
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST_USER_INFO", e.message.toString())
-            ApiResult.UnknownError()
+            ApiResult.UnknownError(e.message.toString())
         }
     }
 }

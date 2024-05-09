@@ -9,6 +9,8 @@ interface FakeRepository {
         userPassword: String
     ): ApiResult<Unit>
 
-    suspend fun requestUserInfo(isExpiredToken: Boolean): ApiResult<UserInfo>
+    suspend fun requestUserInfo(): ApiResult<UserInfo>
+
+    suspend fun changeTokenInfo()
 
 }

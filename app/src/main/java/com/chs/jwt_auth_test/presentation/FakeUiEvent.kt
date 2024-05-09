@@ -4,5 +4,6 @@ sealed class FakeUiEvent {
 
     data object LogIn : FakeUiEvent()
     data object RequestScenario : FakeUiEvent()
+    data object ExpiredScenario : FakeUiEvent()
     data object MultipleRequestScenario : FakeUiEvent()
 }

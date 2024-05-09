@@ -19,8 +19,5 @@ interface FakeService {
         @Header("Authorization") token: String
     ): Response<ResponseUserInfo>
 
-    @POST("auth/refresh-token")
-    suspend fun getRefreshTokenInfo(
-        @Header("refreshToken") token: String
-    ): Response<ResponseTokenInfo>
+
 }

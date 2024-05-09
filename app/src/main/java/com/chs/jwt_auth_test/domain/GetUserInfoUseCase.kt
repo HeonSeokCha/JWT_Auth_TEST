@@ -6,7 +6,7 @@ import javax.inject.Inject
 class GetUserInfoUseCase @Inject constructor(
     private val repository: FakeRepository
 ) {
-    suspend operator fun invoke(isExpiredToken: Boolean): ApiResult<UserInfo> {
-        return repository.requestUserInfo(isExpiredToken)
+    suspend operator fun invoke(): ApiResult<UserInfo> {
+        return repository.requestUserInfo()
     }
 }

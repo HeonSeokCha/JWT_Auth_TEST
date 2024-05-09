@@ -5,5 +5,5 @@ sealed class ApiResult<T>(
 ) {
     class Authorized<T>(data: T? = null) : ApiResult<T>(data)
     class UnAuthorized<T> : ApiResult<T>()
-    class UnknownError<T> : ApiResult<T>()
+    class UnknownError<T>(val message: String) : ApiResult<T>()
 }
