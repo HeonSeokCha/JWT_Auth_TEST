@@ -20,7 +20,7 @@ class FakeRepositoryImpl @Inject constructor(
         return try {
             val response: ResponseTokenInfo = api.requestLogin(
                  request = RequestLoginInfo(
-                     email = userEmail,
+                     userId = userEmail,
                      password = userPassword
                  )
             ).body()!!

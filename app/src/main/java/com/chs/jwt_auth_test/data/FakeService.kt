@@ -9,12 +9,12 @@ import retrofit2.http.POST
 
 interface FakeService {
 
-    @POST("auth/login")
+    @POST("auth")
     suspend fun requestLogin(
         @Body request: RequestLoginInfo
     ): Response<ResponseTokenInfo>
 
-    @GET("auth/profile")
+    @GET("/user")
     suspend fun requestUserProfile(
         @Header("Authorization") token: String
     ): Response<ResponseUserInfo>

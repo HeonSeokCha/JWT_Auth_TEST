@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestLoginInfo(
-    val email: String,
+    val userId: String,
     val password: String
 )

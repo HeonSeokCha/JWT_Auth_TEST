@@ -71,8 +71,6 @@ fun MainScreen(
             if (state.userState != null && state.userState is ApiResult.Authorized) {
                 if (state.userState.data != null) {
                     Text(text = state.userState.data.name)
-                    Text(text = state.userState.data.email)
-                    Text(text = state.userState.data.role)
                 }
             }
         }
