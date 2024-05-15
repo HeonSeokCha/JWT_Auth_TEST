@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.ktor)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

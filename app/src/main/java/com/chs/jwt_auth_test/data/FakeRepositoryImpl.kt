@@ -1,16 +1,19 @@
 package com.chs.jwt_auth_test.data
 
 import android.util.Log
-import androidx.datastore.dataStore
 import com.chs.jwt_auth_test.common.ApiResult
 import com.chs.jwt_auth_test.common.Constants
+import com.chs.jwt_auth_test.data.request.RequestLoginInfo
+import com.chs.jwt_auth_test.data.response.ResponseTokenInfo
+import com.chs.jwt_auth_test.data.response.ResponseUserInfo
+import com.chs.jwt_auth_test.data.service.LocalService
 import com.chs.jwt_auth_test.domain.FakeRepository
 import com.chs.jwt_auth_test.domain.UserInfo
 import retrofit2.HttpException
 import javax.inject.Inject
 
 class FakeRepositoryImpl @Inject constructor(
-    private val api: FakeService,
+    private val api: LocalService,
     private val pref: DataStoreSource
 ) : FakeRepository {
     override suspend fun requestLogin(

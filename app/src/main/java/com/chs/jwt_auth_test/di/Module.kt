@@ -7,14 +7,24 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.chs.jwt_auth_test.common.Constants
 import com.chs.jwt_auth_test.data.DataStoreSource
 import com.chs.jwt_auth_test.data.FakeAuthenticator
-import com.chs.jwt_auth_test.data.FakeService
-import com.chs.jwt_auth_test.data.TokenService
+import com.chs.jwt_auth_test.data.service.LocalService
+import com.chs.jwt_auth_test.data.service.TokenService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -47,9 +57,36 @@ object Module {
 
     @Singleton
     @Provides
-    fun provideJson(): Json {
-        return Json {
+    fun provideJson() = Json {
+        Json {
             this.ignoreUnknownKeys = true
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideHttpClient(
+        jsonProp: Json
+    ): HttpClient {
+        return HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(jsonProp)
+            }
+
+            install(Auth) {
+                bearer {
+                    sendWithoutRequest {
+                        true
+                    }
+
+                }
+            }
+
+            defaultRequest {
+                contentType(ContentType.Application.Json)
+                url(Constants.BASE_URL)
+            }
+
         }
     }
 
@@ -58,15 +95,15 @@ object Module {
     fun provideFakService(
         @AuthenticatedClient okHttpClient: OkHttpClient,
         json: Json
-    ): FakeService {
+    ): LocalService {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(Constants.BASE_FAKE_API_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(
                 json.asConverterFactory(MediaType.parse("application/json")!!)
             )
             .build()
-            .create(FakeService::class.java)
+            .create(LocalService::class.java)
     }
 
     @Singleton
@@ -77,7 +114,7 @@ object Module {
     ): TokenService {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(Constants.BASE_FAKE_API_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(
                 json.asConverterFactory(MediaType.parse("application/json")!!)
             )

@@ -1,4 +1,4 @@
-package com.chs.jwt_auth_test.data
+package com.chs.jwt_auth_test.data.response
 
 import kotlinx.serialization.Serializable
 
